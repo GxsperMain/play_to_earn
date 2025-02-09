@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: FTM
 pragma solidity 0.8.26;
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./PlayToEarnNFT.sol";
+import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/refs/heads/master/contracts/token/ERC20/ERC20.sol";
+import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/refs/heads/master/contracts/access/Ownable.sol";
+import "https://raw.githubusercontent.com/GxsperMain/play_to_earn/refs/heads/main/PlayToEarnNFT.sol";
 
 contract PlayToEarn is
 ERC20("Play To Earn", "PTE"),
@@ -12,7 +12,7 @@ Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
 
     uint256 public constant REWARD_COOLDOWN = 24 hours; // Cooldown per address
     address public constant PTE_NFT_CONTRACT =
-    address(0x3E0ED3704AF4007A41029b07f3284C0D7F6D5328); // PTE NFT Contract
+    address(0x0a37AA28a0DaF565D2aAa41aeCf5051dB28f9634); // PTE NFT Contract
 
     uint256 public lastReductionTimestamp; // Reduction Cooldown
     uint256 public constant REDUCTION_COOLDOWN = 24 hours;
