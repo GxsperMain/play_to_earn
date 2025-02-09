@@ -4,19 +4,19 @@ import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/re
 import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/refs/heads/master/contracts/access/Ownable.sol";
 import "https://raw.githubusercontent.com/GxsperMain/play_to_earn/refs/heads/main/PlayToEarnNFT.sol";
 
-contract PlayToEarn is
-ERC20("Play To Earn", "PTE"),
-Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
+contract PlayToEarnCoin is
+    ERC20("Play To Earn Coin", "PTE"),
+    Ownable(address(0xCC2c9AE7e9E6Cc6Cdf35C2e50d99c4891a1E0A97))
 {
     uint256 public tokensPerDay = 100 * 10**18; // Starting Tokens Per Day "100"
 
     uint256 public constant REWARD_COOLDOWN = 24 hours; // Cooldown per address
     address public constant PTE_NFT_CONTRACT =
-    address(0x0a37AA28a0DaF565D2aAa41aeCf5051dB28f9634); // PTE NFT Contract
+        address(0x0a37AA28a0DaF565D2aAa41aeCf5051dB28f9634); // PTE NFT Contract
 
     uint256 public lastReductionTimestamp; // Reduction Cooldown
     uint256 public constant REDUCTION_COOLDOWN = 24 hours;
-    uint256 public constant REDUCTION_RATE = 9995;
+    uint256 public constant REDUCTION_RATE = 99995;
 
     address[] public addressOnCooldown; // Stores the cooldown address
     mapping(address => uint256) public addressTimestampCooldown; // Stores the timestamp cooldown address
@@ -27,24 +27,27 @@ Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
     uint256 public lastCleanupTimestamp; // Timestamp of the last cleanup call
 
     function rewardTokens() public {
-        // Check if 24 hours have passed since last reward
-        require(
-            block.timestamp >=
-            addressTimestampCooldown[msg.sender] + REWARD_COOLDOWN,
-            "Cannot reward the same wallet within 24 hours"
-        );
-
-        // Apply reduction if 24 hours have passed
-        if (block.timestamp >= lastReductionTimestamp + REDUCTION_COOLDOWN) {
-            tokensPerDay = (tokensPerDay * REDUCTION_RATE) / 10000; // Reduce by 0.05%
-            lastReductionTimestamp = block.timestamp; // Update last reduction time
-        }
-
         // Getting the Play to Earn NFT Contract
         PlayToEarnNFT pteContract = PlayToEarnNFT(PTE_NFT_CONTRACT);
 
         // Get nft amount
         uint256 balance = pteContract.balanceOf(msg.sender);
+
+        // No balance
+        require(balance > 0, "You must own at least one NFT to claim rewards");
+
+        // Check if 24 hours have passed since last reward
+        require(
+            block.timestamp >=
+                addressTimestampCooldown[msg.sender] + REWARD_COOLDOWN,
+            "Cannot reward the same wallet within 24 hours"
+        );
+
+        // Apply reduction if 24 hours have passed
+        if (block.timestamp >= lastReductionTimestamp + REDUCTION_COOLDOWN) {
+            tokensPerDay = (tokensPerDay * REDUCTION_RATE) / 100000; // Reduce by 0.005%
+            lastReductionTimestamp = block.timestamp; // Update last reduction time
+        }
 
         // Give tokens for the rewarded wallet
         for (uint256 i = 0; i < balance; i++) {

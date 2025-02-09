@@ -4,22 +4,12 @@ import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/re
 import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/refs/heads/master/contracts/access/Ownable.sol";
 
 contract PlayToEarnNFT is
-ERC721("Play To Earn NFT", "PTENFT"),
-Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
+    ERC721("Play To Earn NFT", "PTENFT"),
+    Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
 {
-    uint256 public lastTimestamp;
+    uint256 public lastTimestamp = block.timestamp; // Stores the timestamp from last nft
     uint256 public constant REWARD_COOLDOWN = 24 hours; // Cooldown per creation
     uint256 public nextTokenId; // NFT Token ID
-
-    constructor() {
-        // First timestamp creation
-        lastTimestamp = block.timestamp;
-
-        // Give nft to the owner
-        _safeMint(owner(), nextTokenId);
-        // Increase the token id to the next NFT
-        nextTokenId++;
-    }
 
     function mintNFT() public onlyOwner {
         require(
