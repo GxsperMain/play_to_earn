@@ -6,13 +6,13 @@ import "https://raw.githubusercontent.com/GxsperMain/play_to_earn/refs/heads/mai
 
 contract PlayToEarnCoin is
     ERC20("Play To Earn Coin", "PTE"),
-    Ownable(address(0xCC2c9AE7e9E6Cc6Cdf35C2e50d99c4891a1E0A97))
+    Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
 {
     uint256 public tokensPerDay = 100 * 10**18; // Starting Tokens Per Day "100"
 
     uint256 public constant REWARD_COOLDOWN = 24 hours; // Cooldown per address
     address public constant PTE_NFT_CONTRACT =
-        address(0x0a37AA28a0DaF565D2aAa41aeCf5051dB28f9634); // PTE NFT Contract
+        address(0x9a423929dA3a4339A287D737F9355fCA597EEDAc); // PTE NFT Contract
 
     uint256 public lastReductionTimestamp; // Reduction Cooldown
     uint256 public constant REDUCTION_COOLDOWN = 24 hours;
