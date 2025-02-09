@@ -2,45 +2,60 @@
 pragma solidity 0.8.26;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./PlayToEarnNFT.sol";
 
 contract PlayToEarn is
 ERC20("Play To Earn", "PTE"),
 Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
 {
-    uint256 public constant TOKENS_PER_DAY = 100 * 10**18; // Tokens Per Day "100"
+    uint256 public tokensPerDay = 100 * 10**18; // Starting Tokens Per Day "100"
+
     uint256 public constant REWARD_COOLDOWN = 24 hours; // Cooldown per address
     address public constant PTE_NFT_CONTRACT =
     address(0x3E0ED3704AF4007A41029b07f3284C0D7F6D5328); // PTE NFT Contract
 
+    uint256 public lastReductionTimestamp; // Reduction Cooldown
+    uint256 public constant REDUCTION_COOLDOWN = 24 hours;
+    uint256 public constant REDUCTION_RATE = 9995;
+
     address[] public addressOnCooldown; // Stores the cooldown address
     mapping(address => uint256) public addressTimestampCooldown; // Stores the timestamp cooldown address
 
+    event TokensBurned(address indexed account, uint256 amount); // Burn event
+    event RewardClaimed(address indexed account, uint256 amount); // Reward Claimed
+
     uint256 public lastCleanupTimestamp; // Timestamp of the last cleanup call
 
-    function rewardTokens(address rewardedWallet) public onlyOwner {
+    function rewardTokens() public {
         // Check if 24 hours have passed since last reward
         require(
             block.timestamp >=
-            addressTimestampCooldown[rewardedWallet] + REWARD_COOLDOWN,
+            addressTimestampCooldown[msg.sender] + REWARD_COOLDOWN,
             "Cannot reward the same wallet within 24 hours"
         );
+
+        // Apply reduction if 24 hours have passed
+        if (block.timestamp >= lastReductionTimestamp + REDUCTION_COOLDOWN) {
+            tokensPerDay = (tokensPerDay * REDUCTION_RATE) / 10000; // Reduce by 0.05%
+            lastReductionTimestamp = block.timestamp; // Update last reduction time
+        }
 
         // Getting the Play to Earn NFT Contract
         PlayToEarnNFT pteContract = PlayToEarnNFT(PTE_NFT_CONTRACT);
 
         // Get nft amount
-        uint256 balance = pteContract.balanceOf(rewardedWallet);
+        uint256 balance = pteContract.balanceOf(msg.sender);
 
         // Give tokens for the rewarded wallet
         for (uint256 i = 0; i < balance; i++) {
-            _mint(rewardedWallet, TOKENS_PER_DAY);
+            _mint(msg.sender, tokensPerDay);
         }
 
         // Update the last reward timestamp for the given wallet
-        addressTimestampCooldown[rewardedWallet] = block.timestamp;
-        addressOnCooldown.push(rewardedWallet);
+        addressTimestampCooldown[msg.sender] = block.timestamp;
+        addressOnCooldown.push(msg.sender);
+
+        emit RewardClaimed(msg.sender, tokensPerDay);
     }
 
     function cleanupRewardAddresses() public onlyOwner {
@@ -53,9 +68,7 @@ Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
         uint256 i = 0;
 
         // Loop through all addresses on cooldown
-        while (true) {
-            if (i >= addressOnCooldown.length) break;
-
+        while (i < addressOnCooldown.length) {
             // Get the current address from the cooldown list
             address wallet = addressOnCooldown[i];
             // Get the last reward timestamp of the current address
@@ -63,13 +76,17 @@ Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
 
             // Check if the cooldown period has passed for the current address
             if (block.timestamp >= cooldownTime + REWARD_COOLDOWN) {
-                // Remove it
+                // Remove it from mapping address
                 delete addressTimestampCooldown[wallet];
 
+                // Remove it from array address
                 addressOnCooldown[i] = addressOnCooldown[
                     addressOnCooldown.length - 1
                 ];
                 addressOnCooldown.pop();
+
+                // Reduce the index so it can be read again in this index
+                i--;
             }
 
             i++;
@@ -77,5 +94,10 @@ Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
 
         // Update the last cleanup timestamp
         lastCleanupTimestamp = block.timestamp;
+    }
+
+    function burnCoin(uint256 amount) public {
+        _burn(msg.sender, amount);
+        emit TokensBurned(msg.sender, amount);
     }
 }

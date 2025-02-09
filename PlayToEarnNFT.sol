@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: FTM
 pragma solidity 0.8.26;
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/refs/heads/master/contracts/token/ERC721/ERC721.sol";
+import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/refs/heads/master/contracts/access/Ownable.sol";
 
 contract PlayToEarnNFT is
 ERC721("Play To Earn NFT", "PTENFT"),
 Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
 {
     uint256 public lastTimestamp;
+    uint256 public constant REWARD_COOLDOWN = 24 hours; // Cooldown per creation
     uint256 public nextTokenId; // NFT Token ID
 
     constructor() {
@@ -22,8 +23,8 @@ Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
 
     function mintNFT() public onlyOwner {
         require(
-            block.timestamp >= lastTimestamp + 1 hours,
-            "NFTs can only be minted every 1 hour"
+            block.timestamp >= lastTimestamp + REWARD_COOLDOWN,
+            "NFTs can only be minted every 24 hour"
         );
 
         // Update the last time stamp
@@ -35,11 +36,11 @@ Ownable(address(0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE))
         nextTokenId++;
     }
 
-    function burnNFT(uint256 tokenId) public onlyOwner {
+    function burnNFT(uint256 tokenId) public {
         // Check if the current wallet owns the nft
-        require(ownerOf(tokenId) == owner(), "You can only burn your own NFTs");
+        require(ownerOf(tokenId) == msg.sender, "You can only burn your own NFTs");
 
-        // Burn...
+        // Burning
         _burn(tokenId);
     }
 }
