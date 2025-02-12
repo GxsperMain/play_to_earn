@@ -16,12 +16,12 @@ Every hour, the [administrator](0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE) has 
 
 [PTE NFTs](https://polygonscan.com/token/0x9a423929dA3a4339A287D737F9355fCA597EEDAc) can be burned by anyone who have the [PTE NFTs](https://polygonscan.com/token/0x9a423929dA3a4339A287D737F9355fCA597EEDAc) calling the function burnNFT with the NFT ID.
 
-[PTE COINs](https://polygonscan.com/token/0xDd0d112a7D009A87CD9eaC6760f05B642bf8338d) can be burned by anyone, calling the function burnCoin with the [PTE COINs](https://polygonscan.com/token/0xDd0d112a7D009A87CD9eaC6760f05B642bf8338d) amount.
+[PTE COINs](https://polygonscan.com/token/0xb88643dA0Bf6d5D7aB15B2Ec074dB38f6285F72A) can be burned by anyone, calling the function burnCoin with the [PTE COINs](https://polygonscan.com/token/0xb88643dA0Bf6d5D7aB15B2Ec074dB38f6285F72A) amount.
 
 # Address
 
 [Administrator's](0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE) address is: ``0x2c9f3404c42d555c5b766b1f59d6FF24D27f2ecE``
 
-[PTE COINs](https://polygonscan.com/token/0xDd0d112a7D009A87CD9eaC6760f05B642bf8338d) address is: ``0xDd0d112a7D009A87CD9eaC6760f05B642bf8338d``
+[PTE COINs](https://polygonscan.com/token/0xb88643dA0Bf6d5D7aB15B2Ec074dB38f6285F72A) address is: ``0xb88643dA0Bf6d5D7aB15B2Ec074dB38f6285F72A``
 
 [PTE NFTs](https://polygonscan.com/token/0x9a423929dA3a4339A287D737F9355fCA597EEDAc) address is: ``0x9a423929dA3a4339A287D737F9355fCA597EEDAc``
